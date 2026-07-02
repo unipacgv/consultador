@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Consulta Acadêmica</title>
+    <title>Portal de Consulta Acadêmica - UNIPAC</title>
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --accent-blue: #2563eb;
-            --accent-hover: #1d4ed8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --success: #10b981;
+            /* Cores baseadas na logo UNIPAC Governador Valadares */
+            --bg-primary: #fdfdfd; /* Fundo branco/cinza muito claro */
+            --bg-secondary: #f1f5f9; /* Fundo secundário claro para card/input */
+            --accent-red: #990000; /* Vermelho escuro da UNIPAC */
+            --accent-blue: #004b8d; /* Azul escuro de Governador Valadares */
+            --accent-hover-red: #770000; /* Vermelho mais escuro para hover */
+            --accent-hover-blue: #003a6d; /* Azul mais escuro para hover */
+            --text-main: #1e293b; /* Texto principal cinza escuro para legibilidade */
+            --text-muted: #64748b; /* Texto secundário mutado */
+            --border-color: #e2e8f0; /* Bordas suaves e claras */
+            --success: #10b981; /* Verde de sucesso (inalterado) */
+            --error: #ef4444; /* Vermelho de erro (inalterado) */
         }
 
         * {
@@ -36,25 +40,35 @@
         .container {
             width: 100%;
             max-width: 650px;
-            margin-top: 4rem;
+            margin-top: 2rem; /* Reduzido o margin-top para aproximar da logo */
         }
 
         header {
             text-align: center;
             margin-bottom: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        header .logo {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 0.5rem;
         }
 
         header h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 600;
             letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--text-main);
         }
 
         header p {
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .search-box {
@@ -64,7 +78,7 @@
             padding: 0.5rem;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
 
@@ -83,7 +97,7 @@
         }
 
         .search-box button {
-            background-color: var(--accent-blue);
+            background-color: var(--accent-blue); /* Botão de busca azul escuro */
             color: white;
             border: none;
             padding: 0 1.5rem;
@@ -94,7 +108,7 @@
         }
 
         .search-box button:hover {
-            background-color: var(--accent-hover);
+            background-color: var(--accent-hover-blue);
         }
 
         .status-badge {
@@ -111,7 +125,7 @@
         .status-dot {
             width: 8px;
             height: 8px;
-            background-color: #eab308;
+            background-color: #eab308; /* Amarelo de carregando (inalterado) */
             border-radius: 50%;
         }
 
@@ -137,13 +151,13 @@
         .result-header h2 {
             font-size: 1.4rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--accent-red); /* Nome do aluno em vermelho escuro UNIPAC */
         }
 
         .course-tag {
             display: inline-block;
-            background-color: rgba(37, 99, 235, 0.2);
-            color: #60a5fa;
+            background-color: rgba(153, 0, 0, 0.1); /* Fundo sutil do vermelho UNIPAC */
+            color: var(--accent-red);
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.8rem;
@@ -172,18 +186,19 @@
         }
 
         .info-value {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 500;
+            color: var(--text-main);
         }
 
         .error-message {
-            color: #ef4444;
+            color: var(--error);
             text-align: center;
             padding: 1rem;
             display: none;
-            background-color: rgba(239, 68, 68, 0.1);
+            background-color: rgba(239, 68, 68, 0.05);
             border-radius: 8px;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.1);
         }
 
         @keyframes fadeIn {
@@ -196,12 +211,13 @@
 
     <div class="container">
         <header>
-            <h1>Consulta de Informações</h1>
-            <p>Insira o número de matrícula para buscar os dados acadêmicos</p>
+            <img src="Logo.jpeg" alt="Logo UNIPAC Governador Valadares" class="logo">
+            <h1>Portal de Consulta</h1>
+            <p>Insira sua matrícula para acessar seus dados acadêmicos</p>
         </header>
 
         <div class="search-box">
-            <input type="text" id="matriculaInput" placeholder="Digite a matrícula..." autocomplete="off">
+            <input type="text" id="matriculaInput" placeholder="Digite sua matrícula..." autocomplete="off">
             <button onclick="buscarMatricula()">Buscar</button>
         </div>
 
