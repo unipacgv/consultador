@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Consulta Acadêmica - UNIPAC</title>
+    <title>Portal de Consulta</title>
     <style>
         :root {
             /* Cores baseadas na logo UNIPAC Governador Valadares */
@@ -213,7 +213,7 @@
         <header>
             <img src="Logo.jpeg" alt="Logo UNIPAC Governador Valadares" class="logo">
             <h1>Portal de Consulta</h1>
-            <p>Insira sua matrícula para acessar seus dados acadêmicos</p>
+            <p>Insira sua matrícula para ver sua nota</p>
         </header>
 
         <div class="search-box">
@@ -290,9 +290,9 @@
 
             if (arquivosCarregados > 0) {
                 statusDot.classList.add('ready');
-                statusText.textContent = `Base de dados pronta (${arquivosCarregados} cursos carregados)`;
+                statusText.textContent = `Base de dados pronta - ${arquivosCarregados} curso(s) carregado(s)`;
             } else {
-                statusText.textContent = "Erro ao carregar arquivos. Certifique-se de usar um servidor local.";
+                statusText.textContent = "Erro ao carregar arquivos.";
                 statusDot.style.backgroundColor = "#ef4444";
             }
         });
