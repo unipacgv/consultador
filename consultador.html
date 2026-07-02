@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Consulta Acadêmica</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            margin-top: 4rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            background-color: var(--bg-secondary);
+            padding: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-box button {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-box button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .status-badge {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #eab308;
+            border-radius: 50%;
+        }
+
+        .status-dot.ready {
+            background-color: var(--success);
+        }
+
+        .result-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .result-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .course-tag {
+            display: inline-block;
+            background-color: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .error-message {
+            color: #ef4444;
+            text-align: center;
+            padding: 1rem;
+            display: none;
+            background-color: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Consulta de Informações</h1>
+            <p>Insira o número de matrícula para buscar os dados acadêmicos</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="matriculaInput" placeholder="Digite a matrícula..." autocomplete="off">
+            <button onclick="buscarMatricula()">Buscar</button>
+        </div>
+
+        <div class="status-badge">
+            <div id="statusDot" class="status-dot"></div>
+            <span id="statusText">Carregando base de dados...</span>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <div id="resultCard" class="result-card">
+            <div class="result-header">
+                <h2 id="resNome">-</h2>
+                <span id="resCurso" class="course-tag">-</span>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Matrícula</span>
+                    <span id="resMatricula" class="info-value">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Período</span>
+                    <span id="resPeriodo" class="info-value">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Acertos</span>
+                    <span id="resAcertos" class="info-value">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nota</span>
+                    <span id="resNota" class="info-value">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mapeamento dos arquivos CSV locais e seus respectivos nomes de exibição
+        const cursosFontes = [
+            { nome: 'Biomedicina', arquivo: 'biomedicina.csv' },
+            { nome: 'Direito', arquivo: 'direito.csv' },
+            { nome: 'Educação Física', arquivo: 'edfisica.csv' },
+            { nome: 'Enfermagem', arquivo: 'enfermagem.csv' },
+            { nome: 'Pedagogia', arquivo: 'pedagogia.csv' },
+            { nome: 'Psicologia', arquivo: 'psicologia.csv' }
+        ];
+
+        // Banco de dados em memória para busca instantânea
+        const bancoDados = new Map();
+
+        // Inicialização: Carrega todos os arquivos síncronos/assíncronos ao abrir a página
+        window.addEventListener('DOMContentLoaded', async () => {
+            let arquivosCarregados = 0;
+
+            for (const curso of cursosFontes) {
+                try {
+                    const response = await fetch(curso.arquivo);
+                    if (!response.ok) throw new Error(`Erro ao ler ${curso.arquivo}`);
+                    
+                    const text = await response.text();
+                    processarCSV(text, curso.nome);
+                    arquivosCarregados++;
+                } catch (error) {
+                    console.error(`Não foi possível carregar o arquivo de ${curso.nome}:`, error);
+                }
+            }
+
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            if (arquivosCarregados > 0) {
+                statusDot.classList.add('ready');
+                statusText.textContent = `Base de dados pronta (${arquivosCarregados} cursos carregados)`;
+            } else {
+                statusText.textContent = "Erro ao carregar arquivos. Certifique-se de usar um servidor local.";
+                statusDot.style.backgroundColor = "#ef4444";
+            }
+        });
+
+        // Processa o texto bruto do CSV delimitado por ponto e vírgula
+        function processarCSV(texto, nomeCurso) {
+            const linhas = texto.split(/\r?\n/);
+            
+            // Pula a primeira linha (cabeçalho: Matrícula;Nome;Período;Acertos;Nota)
+            for (let i = 1; i < linhas.length; i++) {
+                const linha = linhas[i].trim();
+                if (!linha) continue; // Ignora linhas vazias
+
+                const colunas = linha.split(';');
+                if (colunas.length >= 5) {
+                    const matricula = colunas[0].trim();
+                    
+                    bancoDados.set(matricula, {
+                        matricula: matricula,
+                        nome: colunas[1].trim(),
+                        periodo: colunas[2].trim(),
+                        acertos: colunas[3].trim(),
+                        nota: colunas[4].trim(),
+                        curso: nomeCurso
+                    });
+                }
+            }
+        }
+
+        // Função responsável por buscar os dados do input
+        function buscarMatricula() {
+            const input = document.getElementById('matriculaInput').value.trim();
+            const card = document.getElementById('resultCard');
+            const errorDiv = document.getElementById('errorMessage');
+
+            // Reset visual
+            card.style.display = 'none';
+            errorDiv.style.display = 'none';
+
+            if (!input) {
+                exibirErro('Por favor, digite um número de matrícula.');
+                return;
+            }
+
+            if (bancoDados.has(input)) {
+                const aluno = bancoDados.get(input);
+                
+                // injeta os dados no card
+                document.getElementById('resNome').textContent = aluno.nome;
+                document.getElementById('resCurso').textContent = aluno.curso;
+                document.getElementById('resMatricula').textContent = aluno.matricula;
+                document.getElementById('resPeriodo').textContent = aluno.periodo;
+                document.getElementById('resAcertos').textContent = aluno.acertos;
+                document.getElementById('resNota').textContent = aluno.nota;
+
+                card.style.display = 'block';
+            } else {
+                exibirErro(`Matrícula "${input}" não encontrada em nenhum dos cursos.`);
+            }
+        }
+
+        function exibirErro(msg) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+        }
+
+        // Permite pressionar "Enter" no teclado para realizar a busca
+        document.getElementById('matriculaInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                buscarMatricula();
+            }
+        });
+    </script>
+</body>
+</html>
